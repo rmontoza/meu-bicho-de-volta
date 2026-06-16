@@ -5,9 +5,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { CaseStatus, TimelineEventType, UserRole } from '../../common/enums';
-import { User } from '../users/entities/user.entity';
+import { CaseStatus, NotificationType, TimelineEventType, UserRole } from '../../common/enums';
 import { GeoService } from '../geo/geo.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { User } from '../users/entities/user.entity';
 import { CaseTimelineEvent } from './entities/case-timeline-event.entity';
 import { LostPetCase } from './entities/lost-pet-case.entity';
 import { SightingReport } from './entities/sighting-report.entity';
@@ -22,6 +23,7 @@ export class LostCasesService {
     @InjectRepository(CaseTimelineEvent) private timelineRepo: Repository<CaseTimelineEvent>,
     @InjectRepository(SightingReport) private sightingsRepo: Repository<SightingReport>,
     private geoService: GeoService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async create(user: User, dto: CreateLostCaseDto) {
@@ -55,7 +57,40 @@ export class LostCasesService {
       }),
     );
 
+    // Disparar notificações para usuários dentro do raio — fire-and-forget
+    this.dispatchNearbyAlerts(user.id, saved).catch(() => null);
+
     return saved;
+  }
+
+  private async dispatchNearbyAlerts(ownerId: string, lostCase: LostPetCase) {
+    const userIds = await this.geoService.findUsersWithinRadius(
+      lostCase.lastSeenLatitude,
+      lostCase.lastSeenLongitude,
+      lostCase.radiusKm,
+    );
+
+    const recipients = userIds.filter((id) => id !== ownerId);
+    if (recipients.length === 0) return;
+
+    await this.notificationsService.notifyUsersNearby(recipients, {
+      type: NotificationType.PET_LOST_NEARBY,
+      title: '🐾 Pet perdido perto de você!',
+      body: lostCase.title,
+      relatedEntityType: 'lost-case',
+      relatedEntityId: lostCase.id,
+    });
+
+    await this.casesRepo.update(lostCase.id, { notificationSent: true });
+
+    await this.timelineRepo.save(
+      this.timelineRepo.create({
+        lostCaseId: lostCase.id,
+        eventType: TimelineEventType.ALERT_SENT,
+        description: `Alerta enviado para ${recipients.length} usuário(s) próximo(s).`,
+        metadata: { recipientCount: recipients.length },
+      }),
+    );
   }
 
   async findAll(lat?: number, lng?: number, radiusKm = 10) {
@@ -144,6 +179,16 @@ export class LostCasesService {
         metadata: { sightingId: saved.id, lat: dto.latitude, lng: dto.longitude },
       }),
     );
+
+    // Notificar o dono do caso
+    await this.notificationsService.create({
+      userId: lostCase.ownerId,
+      type: NotificationType.SIGHTING_RECEIVED,
+      title: 'Novo avistamento!',
+      body: dto.comment ?? 'Alguém viu seu pet.',
+      relatedEntityType: 'lost-case',
+      relatedEntityId: caseId,
+    });
 
     return saved;
   }

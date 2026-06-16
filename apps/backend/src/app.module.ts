@@ -7,6 +7,8 @@ import { UsersModule } from './modules/users/users.module';
 import { GeoModule } from './modules/geo/geo.module';
 import { LostCasesModule } from './modules/lost-cases/lost-cases.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { PetsModule } from './modules/pets/pets.module';
+import { MessagingModule } from './modules/messaging/messaging.module';
 
 import databaseConfig from './config/database.config';
 import redisConfig from './config/redis.config';
@@ -67,8 +69,10 @@ import { Report } from './modules/moderation/entities/report.entity';
     AuthModule,
     UsersModule,
     GeoModule,
+    PetsModule,
     LostCasesModule,
     NotificationsModule,
+    MessagingModule,
   ],
 })
 export class AppModule {}
