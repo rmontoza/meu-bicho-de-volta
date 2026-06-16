@@ -1,0 +1,133 @@
+export enum UserRole {
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  ADMIN = 'ADMIN',
+  MODERATOR = 'MODERATOR',
+  SUPPORT = 'SUPPORT',
+  USER = 'USER',
+}
+
+export enum UserStatus {
+  ACTIVE = 'ACTIVE',
+  BLOCKED = 'BLOCKED',
+  DELETED = 'DELETED',
+  PENDING_EMAIL_VALIDATION = 'PENDING_EMAIL_VALIDATION',
+}
+
+export enum LocationSource {
+  GPS = 'GPS',
+  MANUAL = 'MANUAL',
+  APPROXIMATE = 'APPROXIMATE',
+}
+
+export enum DevicePlatform {
+  ANDROID = 'ANDROID',
+  IOS = 'IOS',
+  WEB = 'WEB',
+}
+
+export enum AnimalType {
+  DOG = 'DOG',
+  CAT = 'CAT',
+  BIRD = 'BIRD',
+  OTHER = 'OTHER',
+}
+
+export enum AnimalSize {
+  SMALL = 'SMALL',
+  MEDIUM = 'MEDIUM',
+  LARGE = 'LARGE',
+}
+
+export enum CaseStatus {
+  DRAFT = 'DRAFT',
+  PENDING_REVIEW = 'PENDING_REVIEW',
+  ACTIVE = 'ACTIVE',
+  PAUSED = 'PAUSED',
+  FOUND = 'FOUND',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
+  REJECTED = 'REJECTED',
+  REMOVED_BY_ADMIN = 'REMOVED_BY_ADMIN',
+}
+
+export enum CaseType {
+  LOST = 'LOST',
+  FOUND = 'FOUND',
+}
+
+export enum TimelineEventType {
+  CASE_CREATED = 'CASE_CREATED',
+  CASE_APPROVED = 'CASE_APPROVED',
+  CASE_REJECTED = 'CASE_REJECTED',
+  ALERT_SENT = 'ALERT_SENT',
+  SIGHTING_REPORTED = 'SIGHTING_REPORTED',
+  PET_FOUND = 'PET_FOUND',
+  DESCRIPTION_UPDATED = 'DESCRIPTION_UPDATED',
+  RADIUS_UPDATED = 'RADIUS_UPDATED',
+  CASE_SHARED = 'CASE_SHARED',
+  CASE_PAUSED = 'CASE_PAUSED',
+  CASE_RENEWED = 'CASE_RENEWED',
+  CASE_CLOSED = 'CASE_CLOSED',
+}
+
+export enum SightingCertainty {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+}
+
+export enum NotificationType {
+  PET_LOST_NEARBY = 'PET_LOST_NEARBY',
+  CASE_UPDATED = 'CASE_UPDATED',
+  PET_FOUND = 'PET_FOUND',
+  SIGHTING_RECEIVED = 'SIGHTING_RECEIVED',
+  MESSAGE_RECEIVED = 'MESSAGE_RECEIVED',
+  ADMIN_NOTICE = 'ADMIN_NOTICE',
+  MODERATION_NOTICE = 'MODERATION_NOTICE',
+}
+
+export enum NotificationChannel {
+  PUSH = 'PUSH',
+  IN_APP = 'IN_APP',
+  EMAIL = 'EMAIL',
+  SMS = 'SMS',
+}
+
+export enum NotificationDeliveryStatus {
+  PENDING = 'PENDING',
+  SENT = 'SENT',
+  FAILED = 'FAILED',
+  RETRYING = 'RETRYING',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum ConversationStatus {
+  ACTIVE = 'ACTIVE',
+  CLOSED = 'CLOSED',
+  BLOCKED = 'BLOCKED',
+}
+
+export enum ReportReason {
+  FALSE_CASE = 'FALSE_CASE',
+  INAPPROPRIATE_PHOTO = 'INAPPROPRIATE_PHOTO',
+  SCAM = 'SCAM',
+  INCORRECT_INFO = 'INCORRECT_INFO',
+  ABUSIVE_USER = 'ABUSIVE_USER',
+  SPAM = 'SPAM',
+  SENSITIVE_CONTENT = 'SENSITIVE_CONTENT',
+}
+
+export enum ReportStatus {
+  OPEN = 'OPEN',
+  IN_REVIEW = 'IN_REVIEW',
+  RESOLVED = 'RESOLVED',
+  DISMISSED = 'DISMISSED',
+}
+
+export enum ReportTargetType {
+  LOST_CASE = 'LOST_CASE',
+  FOUND_CASE = 'FOUND_CASE',
+  USER = 'USER',
+  SIGHTING = 'SIGHTING',
+  MESSAGE = 'MESSAGE',
+}
