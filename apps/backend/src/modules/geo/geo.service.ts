@@ -9,17 +9,17 @@ export class GeoService {
   async findUsersWithinRadius(lat: number, lng: number, radiusKm: number): Promise<string[]> {
     const rows = await this.dataSource.query(
       `
-      SELECT ul.user_id
+      SELECT ul."userId"
       FROM user_locations ul
       WHERE ST_DWithin(
-        ST_MakePoint(ul.longitude, ul.latitude)::geography,
-        ST_MakePoint($1, $2)::geography,
-        $3
+        ST_MakePoint(ul.longitude::float8, ul.latitude::float8)::geography,
+        ST_MakePoint($1::float8, $2::float8)::geography,
+        $3::float8
       )
       `,
       [lng, lat, radiusKm * 1000],
     );
-    return rows.map((r: { user_id: string }) => r.user_id);
+    return rows.map((r: { userId: string }) => r.userId);
   }
 
   async findCasesNearUser(
@@ -32,18 +32,20 @@ export class GeoService {
       SELECT
         lpc.id,
         ROUND(
-          ST_Distance(
-            ST_MakePoint(lpc.last_seen_longitude, lpc.last_seen_latitude)::geography,
-            ST_MakePoint($1, $2)::geography
-          ) / 1000.0,
+          (ST_Distance(
+            ST_MakePoint(lpc."lastSeenLongitude"::float8, lpc."lastSeenLatitude"::float8)::geography,
+            ST_MakePoint($1::float8, $2::float8)::geography
+          ) / 1000.0)::numeric,
           2
         ) AS distance_km
       FROM lost_pet_cases lpc
       WHERE lpc.status = 'ACTIVE'
+        AND lpc."lastSeenLatitude" IS NOT NULL
+        AND lpc."lastSeenLongitude" IS NOT NULL
         AND ST_DWithin(
-          ST_MakePoint(lpc.last_seen_longitude, lpc.last_seen_latitude)::geography,
-          ST_MakePoint($1, $2)::geography,
-          $3
+          ST_MakePoint(lpc."lastSeenLongitude"::float8, lpc."lastSeenLatitude"::float8)::geography,
+          ST_MakePoint($1::float8, $2::float8)::geography,
+          $3::float8
         )
       ORDER BY distance_km ASC
       `,
