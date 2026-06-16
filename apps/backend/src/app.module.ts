@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import * as path from 'path';
+
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { GeoModule } from './modules/geo/geo.module';
@@ -9,10 +12,12 @@ import { LostCasesModule } from './modules/lost-cases/lost-cases.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PetsModule } from './modules/pets/pets.module';
 import { MessagingModule } from './modules/messaging/messaging.module';
+import { MediaModule } from './modules/media/media.module';
 
 import databaseConfig from './config/database.config';
 import redisConfig from './config/redis.config';
 import jwtConfig from './config/jwt.config';
+import storageConfig from './config/storage.config';
 
 import { User } from './modules/users/entities/user.entity';
 import { UserDevice } from './modules/users/entities/user-device.entity';
@@ -31,7 +36,14 @@ import { Report } from './modules/moderation/entities/report.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, redisConfig, jwtConfig],
+      load: [databaseConfig, redisConfig, jwtConfig, storageConfig],
+    }),
+
+    // Serve arquivos locais em /uploads — usado apenas em dev quando R2 não está configurado
+    ServeStaticModule.forRoot({
+      rootPath: path.join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
+      serveStaticOptions: { index: false },
     }),
 
     TypeOrmModule.forRootAsync({
@@ -73,6 +85,7 @@ import { Report } from './modules/moderation/entities/report.entity';
     LostCasesModule,
     NotificationsModule,
     MessagingModule,
+    MediaModule,
   ],
 })
 export class AppModule {}
