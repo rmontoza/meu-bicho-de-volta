@@ -6,6 +6,7 @@ import { Notification } from './entities/notification.entity';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsProcessor } from './notifications.processor';
 import { NOTIFICATIONS_QUEUE, NotificationsService } from './notifications.service';
+import { FcmService } from './fcm.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { NOTIFICATIONS_QUEUE, NotificationsService } from './notifications.servi
     BullModule.registerQueue({ name: NOTIFICATIONS_QUEUE }),
   ],
   controllers: [NotificationsController],
-  providers: [NotificationsService, NotificationsProcessor],
+  providers: [NotificationsService, NotificationsProcessor, FcmService],
   exports: [NotificationsService],
 })
 export class NotificationsModule {}
